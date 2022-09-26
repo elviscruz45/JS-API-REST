@@ -1,6 +1,7 @@
 console.log("Hello World")
 
-const API_URL="https://api.thecatapi.com/v1/images/search?limit=3&live_YILlQqExhscozkRUCurw9wg00ifwOEVPAuBaxlwVaM3Js2QeS11Q2dtfsu55ey7W"
+const API_URL_RANDOM="https://api.thecatapi.com/v1/images/search?limit=2&api_key=live_YILlQqExhscozkRUCurw9wg00ifwOEVPAuBaxlwVaM3Js2QeS11Q2dtfsu55ey7W"
+const API_URL_FAVORITES="https://api.thecatapi.com/v1/favourites?limit=100&api_key=live_YILlQqExhscozkRUCurw9wg00ifwOEVPAuBaxlwVaM3Js2QeS11Q2dtfsu55ey7W"
 
 /*
 fetch(URL)
@@ -12,17 +13,91 @@ fetch(URL)
 */
 
 
-async function reload(){
-    const rest= await fetch(API_URL);
+const spanError=document.getElementById("error")
+
+
+async function loadRandomMichis(){
+    const rest= await fetch(API_URL_RANDOM);
     const data= await rest.json();
+    console.log("Random")
     console.log(data)
 
-    const img1=document.getElementById("imagen1");
-    img1.src=data[0].url
-    const img2=document.getElementById("imagen2");
-    img2.src=data[1].url
-    const img3=document.getElementById("imagen3");
-    img3.src=data[2].url
+
+    if (rest.status!==200){
+        spanError.innerHTML="Hubo un error: "+rest.status;
+
+    }else{
+        const img1=document.getElementById("imagen1");
+        const img2=document.getElementById("imagen2");
+        const btn1=document.getElementById("btn1")
+        const btn2=document.getElementById("btn2")
+
+        img1.src=data[0].url
+        img2.src=data[1].url
+
+        /*
+        btn1.onclick=saveFavoritesMischis(data[0].id)
+        btn2.onclick=saveFavoritesMischis(data[1].id)
+        */
+        btn1.onclick=()=>saveFavoritesMischis(data[0].id)
+        btn2.onclick=()=>saveFavoritesMischis(data[1].id)
+
+    }
+
 }
 
-reload()
+async function loadFavoritesMichis(){
+    const rest= await fetch(API_URL_FAVORITES);
+    const data= await rest.json();
+    console.log("Favorites")
+    console.log(data)
+    if (rest.status !== 200) {
+        spanError.innerHTML = "Hubo un error: " + rest.status + data.message;
+      }else{
+        data.forEach(michi=>{
+            const section=document.getElementById("favoritesMichis")
+            const article=document.createElement("article");
+            const img=document.createElement("img")
+            const btn=document.createElement("button")
+            const btnText=document.createTextNode("Sacar al michi de favoritos");
+            
+            img.src=michi.image.url
+            img.width=150
+
+            btn.appendChild(btnText)
+            article.appendChild(img)
+            article.appendChild(btn)
+            section.appendChild(article)
+        })
+      }
+}
+
+
+async function saveFavoritesMischis(id){
+    const rest=await fetch(API_URL_FAVORITES,{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+        },
+        body:JSON.stringify({
+            image_id:id
+        }),
+    });
+
+    const data= await rest.json();
+    console.log("save")
+    console.log(rest)
+
+    if (rest.status!==200){
+        spanError.innerHTML="Hubo un error: "+rest.status+data.message;
+        
+
+    }
+    }
+
+
+
+
+loadRandomMichis()
+loadFavoritesMichis()
+
