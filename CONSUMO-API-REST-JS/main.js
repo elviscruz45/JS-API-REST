@@ -1,8 +1,8 @@
 console.log("Hello World")
 
-const API_URL_RANDOM="https://api.thecatapi.com/v1/images/search?limit=2&api_key=live_YILlQqExhscozkRUCurw9wg00ifwOEVPAuBaxlwVaM3Js2QeS11Q2dtfsu55ey7W"
-const API_URL_FAVORITES="https://api.thecatapi.com/v1/favourites?limit=100&api_key=live_YILlQqExhscozkRUCurw9wg00ifwOEVPAuBaxlwVaM3Js2QeS11Q2dtfsu55ey7W"
-const API_URL_FAVORITES_DELETE=(id)=>`https://api.thecatapi.com/v1/favourites/${id}?api_key=live_YILlQqExhscozkRUCurw9wg00ifwOEVPAuBaxlwVaM3Js2QeS11Q2dtfsu55ey7W`
+const API_URL_RANDOM="https://api.thecatapi.com/v1/images/search?limit=2&"
+const API_URL_FAVORITES="https://api.thecatapi.com/v1/favourites"
+const API_URL_FAVORITES_DELETE=(id)=>`https://api.thecatapi.com/v1/favourites/${id}`
 
 /*
 fetch(URL)
@@ -46,7 +46,12 @@ async function loadRandomMichis(){
 }
 
 async function loadFavoritesMichis(){
-    const rest= await fetch(API_URL_FAVORITES);
+    const rest= await fetch(API_URL_FAVORITES,{
+        method:"GET",
+        headers:{
+            "X-API-KEY":"live_YILlQqExhscozkRUCurw9wg00ifwOEVPAuBaxlwVaM3Js2QeS11Q2dtfsu55ey7W"
+        }
+    });
     const data= await rest.json();
     console.log("Favorites")
     console.log(data)
@@ -86,9 +91,10 @@ async function saveFavoritesMischis(id){
         method:"POST",
         headers:{
             "Content-Type":"application/json",
+            "X-API-KEY":"live_YILlQqExhscozkRUCurw9wg00ifwOEVPAuBaxlwVaM3Js2QeS11Q2dtfsu55ey7W",
         },
         body:JSON.stringify({
-            image_id:id
+            image_id:id,
         }),
     });
 
@@ -113,6 +119,8 @@ async function deleteFavoritesMischis(id){
         method:"DELETE",
         headers:{
             "Content-Type":"application/json",
+            "X-API-KEY":"live_YILlQqExhscozkRUCurw9wg00ifwOEVPAuBaxlwVaM3Js2QeS11Q2dtfsu55ey7W",
+
         },
 
     });
